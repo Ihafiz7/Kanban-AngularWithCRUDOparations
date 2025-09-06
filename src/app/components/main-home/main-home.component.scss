@@ -1,0 +1,15 @@
+/* Simple marquee effect */
+.marquee {
+  animation: scroll 15s linear infinite;
+}
+
+@keyframes scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.logo-img {
+  width: 150px;
+  height: 100px;
+  object-fit: contain;  
+}
+

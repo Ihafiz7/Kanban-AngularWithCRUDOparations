@@ -1,0 +1,102 @@
+<div class="d-flex flex-column vh-100">
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+    <a class="navbar-brand fw-bold text-light" href="#">PMRAS</a>
+    <div class="ms-auto d-flex align-items-center">
+      <input class="form-control form-control-sm me-2" type="search" placeholder="Search tasks...">
+      <button class="btn btn-outline-light btn-sm">Profile</button>
+    </div>
+  </nav>
+
+  <!-- Content Area -->
+  <div class="d-flex flex-grow-1">
+    <!-- Sidebar -->
+    <div class="bg-light border-end p-3" style="width: 200px;">
+      <h6 class="fw-bold mb-3">Navigation</h6>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Dashboard</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Projects</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Teams</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Reports</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Project Content -->
+    <div class="flex-grow-1 p-4 bg-white">
+      <!-- Project Header -->
+      <h3 class="fw-bold mb-3">{{ projectName }}</h3>
+
+      <!-- Sub-navigation Tabs -->
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item" *ngFor="let tab of tabs; let i = index">
+          <a class="nav-link" [class.active]="selectedTabIndex === i" href="#" (click)="selectTab(i)">
+            {{ tab }}
+          </a>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Summary: Kanban Board -->
+        <div *ngIf="selectedTabIndex === 0">
+          <div class="row g-3 kanban-row">
+            <!-- Columns -->
+            <div class="col-md-3" *ngFor="let col of columnKeys">
+              <div class="card shadow-sm h-100">
+                <!-- Column Header with + button -->
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">{{ columnNames[col] }}</span>
+                  <button class="btn btn-sm btn-success" (click)="addTask(col)">+</button>
+                </div>
+
+                <!-- Tasks -->
+                <div class="card-body bg-light overflow-visible">
+                  <div *ngFor="let task of tasks[col]; let tIndex = index" class="card mb-2 p-2 task-card position-relative">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <h6 class="mb-0 d-inline">{{ task.title }}</h6>
+                        <p class="small text-muted mb-0">{{ task.description }}</p>
+                      </div>
+
+                      <!-- Options Dropdown -->
+                      <div ngbDropdown class="d-inline-block">
+                        <button class="btn btn-sm btn-outline-secondary" ngbDropdownToggle>
+                          ...
+                        </button>
+                        <div ngbDropdownMenu class="dropdown-menu-end">
+                          <button class="dropdown-item" (click)="changeStatus(col, tIndex)">Change Status</button>
+                          <button class="dropdown-item" (click)="removeTask(col, tIndex)">Delete</button>
+                          <button class="dropdown-item" (click)="addNote(col, tIndex)">Add Note</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div *ngIf="task.notes?.length" class="mt-1">
+                      <small *ngFor="let note of task.notes" class="d-block text-muted">• {{ note }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Tabs -->
+        <div *ngIf="selectedTabIndex === 1">
+          <h5>List Page</h5>
+          <p>List of tasks, tickets, or items for this project.</p>
+        </div>
+        <div *ngIf="selectedTabIndex === 2">
+          <h5>Forms Page</h5>
+          <p>Forms to create new tasks, reports, or entries.</p>
+        </div>
+        <div *ngIf="selectedTabIndex === 3">
+          <h5>Pages Page</h5>
+          <p>Additional pages, documentation, or wiki for this project.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

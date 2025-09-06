@@ -1,0 +1,23 @@
+.kanban-row {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+
+.task-card {
+  position: relative;
+  cursor: grab;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-menu {
+  z-index: 2000 !important; /* ensures dropdown pops above all cards */
+}
+
+.btn-outline-secondary {
+  border: none;
+  padding: 0.2rem 0.4rem;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #e9ecef;
+}
