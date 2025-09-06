@@ -8,6 +8,8 @@ import { MainHomeComponent } from './components/main-home/main-home.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { BoardComponent } from './components/board/board.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CreateNewProjectComponent } from './components/create-new-project/create-new-project.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,12 +17,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     MainNavComponent,
     MainHomeComponent,
     FooterComponent,
-    BoardComponent
+    BoardComponent,
+    CreateNewProjectComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

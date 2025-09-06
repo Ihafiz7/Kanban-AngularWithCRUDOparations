@@ -1,0 +1,26 @@
+{
+    "user":[
+        {
+            "id":"1",
+            "name":"Hafiz",
+            "email":"hafizalasad@gmail.com"
+        }
+    ],
+    "project":[
+        {
+            "id":"1",
+            "name":"project Name",
+            "ownerId": "1",
+            "memberId":"1"
+        }
+    ],
+
+        "board": [
+        {
+            "id":"1",
+            "projectId":"1",
+            "name": "Tasks"
+        }
+    ]
+
+}
