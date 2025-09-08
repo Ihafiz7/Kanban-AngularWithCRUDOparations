@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+  <div class="card shadow-sm p-4" style="width: 400px;">
+    <h3 class="text-center text-success mb-4">Sign Up</h3>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+      <!-- Name -->
+      <div class="mb-3">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" id="name" class="form-control" formControlName="name" placeholder="Enter your name">
+        <div *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.invalid" class="text-danger small">
+          Name is required
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="signupEmail" class="form-label">Email address</label>
+        <input type="email" id="signupEmail" class="form-control" formControlName="email" placeholder="Enter email">
+        <div *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid" class="text-danger small">
+          Valid email is required
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="signupPassword" class="form-label">Password</label>
+        <input type="password" id="signupPassword" class="form-control" formControlName="password" placeholder="Enter password">
+        <div *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid" class="text-danger small">
+          Password is required
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" placeholder="Confirm password">
+        <div *ngIf="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.invalid" class="text-danger small">
+          Confirm password is required
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-success w-100" [disabled]="signupForm.invalid">
+        Sign Up
+      </button>
+    </form>
+
+    <p class="text-center mt-3 small">
+      Already have an account? <a routerLink="/login" class="text-decoration-none">Login</a>
+    </p>
+    <button class="btn btn-primary" routerLink="/home">Go To Home</button>
+  </div>
+</div>
+

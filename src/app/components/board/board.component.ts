@@ -1,12 +1,43 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ProjectService } from 'src/app/services/project.service';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss']
 })
-export class BoardComponent {
-  projectName = 'Project Alpha';
+export class BoardComponent implements OnInit {
+  projects:any[] = [];
+  
+
+  constructor( private http: ProjectService, private route : ActivatedRoute){}
+
+  ngOnInit(): void {
+    this.loadProjects();
+  }
+  loadProjects() {
+    const projectId:string = this.route.snapshot.paramMap.get('id')!;
+    this.http.getProjectById(projectId).subscribe({
+      next: (data) => {
+        this.projects = data;  
+        console.log('current project: ', data);
+      },
+      error: (err) => console.log('Error Loading Projects: ',err),
+      
+    });
+  }
+
+  
+
+
+
+
+
+
+
+
+  projectName = 'Alpha';
   tabs = ['Kanban', 'Summary', 'Forms', 'Users'];
   selectedTabIndex = 0;
 

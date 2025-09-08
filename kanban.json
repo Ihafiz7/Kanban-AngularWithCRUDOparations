@@ -1,26 +1,93 @@
 {
-    "user":[
-        {
-            "id":"1",
-            "name":"Hafiz",
-            "email":"hafizalasad@gmail.com"
-        }
-    ],
-    "project":[
-        {
-            "id":"1",
-            "name":"project Name",
-            "ownerId": "1",
-            "memberId":"1"
-        }
-    ],
-
-        "board": [
-        {
-            "id":"1",
-            "projectId":"1",
-            "name": "Tasks"
-        }
-    ]
-
+  "projects": [
+    {
+      "id": "1",
+      "projectName": "Demo Project",
+      "projectType": "scrum",
+      "columns": [
+        "todo",
+        "inProgress"
+      ],
+      "customColumns": [
+        "Testing",
+        "Review QA"
+      ]
+    },
+    {
+      "id": "e0b8",
+      "projectName": "asad",
+      "projectType": "task-management",
+      "columns": [
+        "todo"
+      ],
+      "newCustomColumn": null,
+      "customColumns": [
+        "Nope"
+      ]
+    },
+    {
+      "id": "3430",
+      "projectName": "asad",
+      "projectType": "scrum",
+      "columns": [
+        "todo",
+        "inProgress"
+      ],
+      "newCustomColumn": "Nope",
+      "customColumns": []
+    },
+    {
+      "id": "2531",
+      "projectName": "asad",
+      "projectType": "software-development",
+      "columns": [
+        "inReview",
+        "done"
+      ],
+      "newCustomColumn": "",
+      "customColumns": []
+    },
+    {
+      "id": "e83b",
+      "projectName": "asad",
+      "projectType": "software-development",
+      "columns": [
+        "inProgress",
+        "done"
+      ],
+      "newCustomColumn": "",
+      "customColumns": []
+    },
+    {
+      "id": "7054",
+      "projectName": "asad",
+      "projectType": "scrum",
+      "columns": [
+        "todo",
+        "inProgress"
+      ],
+      "newCustomColumn": "ad",
+      "customColumns": []
+    },
+    {
+      "id": "1fab",
+      "projectName": "asad",
+      "projectType": "scrum",
+      "columns": [
+        "inProgress"
+      ],
+      "newCustomColumn": "",
+      "customColumns": []
+    },
+    {
+      "id": "6998",
+      "projectName": "asad",
+      "projectType": "scrum",
+      "columns": [
+        "todo"
+      ],
+      "newCustomColumn": "",
+      "customColumns": []
+    }
+  ]
 }

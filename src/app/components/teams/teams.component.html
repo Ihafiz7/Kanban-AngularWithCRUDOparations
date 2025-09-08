@@ -1,0 +1,12 @@
+<h2 class="mb-4">Teams</h2>
+
+<div class="row g-3">
+  <div class="col-md-4" *ngFor="let team of teams">
+    <div class="card shadow-sm p-3">
+      <h5>{{ team.name }}</h5>
+      <p class="small text-muted">{{ team.members }} members</p>
+      <button class="btn btn-sm btn-outline-primary">View</button>
+    </div>
+  </div>
+</div>
+

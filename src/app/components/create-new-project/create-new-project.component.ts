@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ProjectService } from 'src/app/services/project.service';
 
 @Component({
   selector: 'app-create-new-project',
@@ -7,8 +9,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./create-new-project.component.scss']
 })
 export class CreateNewProjectComponent {
-  projectForm: FormGroup;
-  customColumns: string[] = []; // for displaying added custom columns
+  projectForm!: FormGroup;
+  customColumns: string[] = [];
 
   columnOptions = [
     { label: 'ToDo', value: 'todo' },
@@ -17,66 +19,68 @@ export class CreateNewProjectComponent {
     { label: 'Done', value: 'done' }
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private api: ProjectService, private router: Router) { }
+
+  ngOnInit(): void {
     this.projectForm = this.fb.group({
       projectName: ['', Validators.required],
       projectType: ['', Validators.required],
-      columns: [[], Validators.required],   
-      customColumns: [[]],                  
-      newCustomColumn: ['']                 
+      columns: [[], Validators.required],
+      newCustomColumn: ['']
     });
   }
 
-  // Checkbox change handler
-  onColumnChange(event: any) {
-    const selected = this.projectForm.get('columns')?.value as string[];
+  //Checkbox changes
+  onColumnChange(event: any): void {
+    const columns = this.projectForm.get('columns')?.value || [];
     if (event.target.checked) {
-      selected.push(event.target.value);
+      columns.push(event.target.value);
     } else {
-      const index = selected.indexOf(event.target.value);
-      if (index !== -1) {
-        selected.splice(index, 1);
+      const index = columns.indexOf(event.target.value);
+      if (index >= 0) {
+        columns.splice(index, 1);
       }
     }
-    this.projectForm.get('columns')?.setValue(selected);
+    this.projectForm.get('columns')?.setValue(columns);
+    this.projectForm.get('columns')?.updateValueAndValidity();
   }
 
-  // Add custom column
-  addCustomColumn() {
+  // Add a custom column
+  addCustomColumn(): void {
     const newCol = this.projectForm.get('newCustomColumn')?.value?.trim();
-    if (newCol) {
+    if (newCol && !this.customColumns.includes(newCol)) {
       this.customColumns.push(newCol);
-
-      // sync with form control
-      this.projectForm.get('customColumns')?.setValue(this.customColumns);
-
-      // clear input
       this.projectForm.get('newCustomColumn')?.reset();
     }
   }
 
   // Remove custom column
-  removeCustomColumn(index: number) {
+  removeCustomColumn(index: number): void {
     this.customColumns.splice(index, 1);
-
-    // sync with form control
-    this.projectForm.get('customColumns')?.setValue(this.customColumns);
   }
 
-  // Submit handler
-  onSubmit() {
+  // Submit form
+  onSubmit(): void {
     if (this.projectForm.valid) {
-      const payload = this.projectForm.value;
+      const formValue = {
+        ...this.projectForm.value,
+        customColumns: this.customColumns
+      };
 
-      // Merge default + custom columns for final structure
-      const allColumns = [...payload.columns, ...this.customColumns];
-      const finalData = { ...payload, allColumns };
+      console.log('Form submitted:', formValue);
 
-      console.log('Form Submitted:', finalData);
+      //send to backend 
+      this.api.createProject(formValue).subscribe({
+        next: (res) => {
+          const newProjectId = res.id;
+          console.log('Newly created project ID:', newProjectId);
+          this.router.navigate([`/kanban/${newProjectId}`], newProjectId)
+        },
+        error: (err) => console.error('Error saving project:', err),
+        
+      });
 
-      // PUT request :
-      // this.http.put('http://localhost:8080/api/projects', finalData)
-      //   .subscribe(res => console.log('Saved:', res));
+      
     }
   }
 }

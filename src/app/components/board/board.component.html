@@ -14,11 +14,11 @@
     <div class="bg-light border-end p-3" style="width: 200px;">
       <h6 class="fw-bold mb-3">Navigation</h6>
       <ul class="nav flex-column">
-        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Dashboard</a></li>
-        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Projects</a></li>
-        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Teams</a></li>
-        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Reports</a></li>
-        <li class="nav-item mb-2"><a href="#" class="nav-link text-dark">Settings</a></li>
+        <li class="nav-item mb-2"><a routerLink="/dashboard" class="nav-link text-dark">Dashboard</a></li>
+        <li class="nav-item mb-2"><a routerLink="/projects" class="nav-link text-dark">Projects</a></li>
+        <li class="nav-item mb-2"><a routerLink="/teams" class="nav-link text-dark">Teams</a></li>
+        <li class="nav-item mb-2"><a routerLink="/reports" class="nav-link text-dark">Reports</a></li>
+        <li class="nav-item mb-2"><a routerLink="/settings" class="nav-link text-dark">Settings</a></li>
       </ul>
     </div>
 
@@ -30,7 +30,7 @@
       <!-- Sub-navigation Tabs -->
       <ul class="nav nav-tabs mb-4">
         <li class="nav-item" *ngFor="let tab of tabs; let i = index">
-          <a class="nav-link" [class.active]="selectedTabIndex === i" href="#" (click)="selectTab(i)">
+          <a class="nav-link" [class.active]="selectedTabIndex === i" routerLink="/{{tab}}" (click)="selectTab(i)">
             {{ tab }}
           </a>
         </li>
