@@ -15,7 +15,35 @@
       <h6 class="fw-bold mb-3">Navigation</h6>
       <ul class="nav flex-column">
         <li class="nav-item mb-2"><a routerLink="/dashboard" class="nav-link text-dark">Dashboard</a></li>
-        <li class="nav-item mb-2"><a routerLink="/projects" class="nav-link text-dark">Projects</a></li>
+
+        <!-- Projects Accordion -->
+        <li class="nav-item mb-2">
+          <div class="accordion" id="projectsAccordion">
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header" id="headingProjects">
+                <button class="accordion-button collapsed p-2 bg-light text-dark fw-bold shadow-none" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#collapseProjects" aria-expanded="false"
+                  aria-controls="collapseProjects">
+                  Projects
+                </button>
+              </h2>
+              <div id="collapseProjects" class="accordion-collapse collapse" aria-labelledby="headingProjects"
+                data-bs-parent="#projectsAccordion">
+                <div class="accordion-body p-2">
+                  <ul class="list-unstyled mb-0">
+                    <li *ngFor="let project of projectNames" class="mb-1">
+                      <a [routerLink]="['/kanban', project.id]" class="nav-link text-dark small">
+                        {{ project.projectName }}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+
         <li class="nav-item mb-2"><a routerLink="/teams" class="nav-link text-dark">Teams</a></li>
         <li class="nav-item mb-2"><a routerLink="/reports" class="nav-link text-dark">Reports</a></li>
         <li class="nav-item mb-2"><a routerLink="/settings" class="nav-link text-dark">Settings</a></li>
@@ -23,9 +51,9 @@
     </div>
 
     <!-- Main Project Content -->
-    <div class="flex-grow-1 p-4 bg-white">
+    <div class="flex-grow-1 p-4 bg-white" *ngIf="projects">
       <!-- Project Header -->
-      <h3 class="fw-bold mb-3">{{ projectName }}</h3>
+      <h3 class="fw-bold mb-3">{{ projects.projectName }}</h3>
 
       <!-- Sub-navigation Tabs -->
       <ul class="nav nav-tabs mb-4">
@@ -36,65 +64,110 @@
         </li>
       </ul>
 
-      <!-- Tab Content -->
-      <div class="tab-content">
-        <!-- Summary: Kanban Board -->
-        <div *ngIf="selectedTabIndex === 0">
-          <div class="row g-3 kanban-row">
-            <!-- Columns -->
-            <div class="col-md-3" *ngFor="let col of columnKeys">
-              <div class="card shadow-sm h-100">
-                <!-- Column Header with + button -->
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  <span class="fw-bold">{{ columnNames[col] }}</span>
-                  <button class="btn btn-sm btn-success" (click)="addTask(col)">+</button>
-                </div>
+      <div class="row g-3 kanban-row">
+        <div class="col-md-3" *ngFor="let col of allColumns">
+          <div class="card shadow-sm h-100">
+            <!-- Column Header -->
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="fw-bold">{{ col }}</span>
+              <button class="btn btn-sm btn-success" (click)="openAddTaskModal(col)">+</button>
+            </div>
 
-                <!-- Tasks -->
-                <div class="card-body bg-light overflow-visible">
-                  <div *ngFor="let task of tasks[col]; let tIndex = index" class="card mb-2 p-2 task-card position-relative">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div>
-                        <h6 class="mb-0 d-inline">{{ task.title }}</h6>
-                        <p class="small text-muted mb-0">{{ task.description }}</p>
-                      </div>
+            <!-- Tasks -->
+            <div class="card-body bg-light overflow-visible">
+              <div *ngFor="let task of tasks[col]; let tIndex = index"
+                class="card mb-2 p-2 task-card position-relative">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-0 d-inline">{{ task.title }}</h6>
+                    <p class="small text-muted mb-0">{{ task.description }}</p>
+                    <p class="small mb-0">Started On: <span class="text-primary">{{task.startDate}}</span></p>
+                    <p class="small">DeadLine: <span class="text-danger"> {{task.endDate}}</span></p>
+                  </div>
 
-                      <!-- Options Dropdown -->
-                      <div ngbDropdown class="d-inline-block">
-                        <button class="btn btn-sm btn-outline-secondary" ngbDropdownToggle>
-                          ...
-                        </button>
-                        <div ngbDropdownMenu class="dropdown-menu-end">
-                          <button class="dropdown-item" (click)="changeStatus(col, tIndex)">Change Status</button>
-                          <button class="dropdown-item" (click)="removeTask(col, tIndex)">Delete</button>
-                          <button class="dropdown-item" (click)="addNote(col, tIndex)">Add Note</button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Notes -->
-                    <div *ngIf="task.notes?.length" class="mt-1">
-                      <small *ngFor="let note of task.notes" class="d-block text-muted">• {{ note }}</small>
+                  <!-- Options Dropdown -->
+                  <div ngbDropdown class="position-absolute top-0 end-0 m-2">
+                    <button class="btn btn-sm btn-outline-secondary" ngbDropdownToggle>
+                      ...
+                    </button>
+                    <div ngbDropdownMenu class="dropdown-menu-end">
+                      <button class="dropdown-item" (click)="openStatusModal(task,col)">Change Status</button>
+                      <button class="dropdown-item" (click)="removeTask(col, tIndex)">Delete</button>
+                      <button class="dropdown-item" (click)="addNote(col, tIndex)">Add Note</button>
                     </div>
                   </div>
+                </div>
+
+                <!-- Notes -->
+                <div *ngIf="task.notes?.length" class="mt-1">
+                  <small *ngFor="let note of task.notes" class="d-block text-muted">• {{ note }}</small>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Other Tabs -->
-        <div *ngIf="selectedTabIndex === 1">
-          <h5>List Page</h5>
-          <p>List of tasks, tickets, or items for this project.</p>
+    <!-- Add Task Modal -->
+    <div class="modal fade show" tabindex="-1" *ngIf="showTaskModal"
+      style="display: block; background: rgba(0,0,0,0.5)">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form [formGroup]="taskForm" (ngSubmit)="submitTask()">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Task to "{{ selectedColumn }}"</h5>
+              <button type="button" class="btn-close" (click)="closeTaskModal()">X</button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" formControlName="title">
+                <div *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.invalid" class="text-danger small">
+                  Title is required
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" rows="3" formControlName="description"></textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Start Date</label>
+                <input type="date" class="form-control" formControlName="startDate">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">End Date</label>
+                <input type="date" class="form-control" formControlName="endDate">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeTaskModal()">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="taskForm.invalid">Add Task</button>
+            </div>
+          </form>
         </div>
-        <div *ngIf="selectedTabIndex === 2">
-          <h5>Forms Page</h5>
-          <p>Forms to create new tasks, reports, or entries.</p>
-        </div>
-        <div *ngIf="selectedTabIndex === 3">
-          <h5>Pages Page</h5>
-          <p>Additional pages, documentation, or wiki for this project.</p>
+      </div>
+    </div>
+
+    <!-- Status Modal -->
+    <div class="modal fade show" tabindex="-1" *ngIf="statusModalOpen"
+      style="display: block; background: rgba(0,0,0,0.5)">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Move Task: {{ statusTask?.title }}</h5>
+            <button type="button" class="btn-close" (click)="closeStatusModal()">X</button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label">Select Column</label>
+            <select class="form-select" [(ngModel)]="selectedNewColumn">
+              <option *ngFor="let col of availableColumns" [value]="col">{{ col }}</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeStatusModal()">Cancel</button>
+            <button class="btn btn-primary" (click)="changeStatusTo(selectedNewColumn)">Move</button>
+          </div>
         </div>
       </div>
     </div>

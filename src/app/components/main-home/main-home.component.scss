@@ -1,15 +1,35 @@
-/* Simple marquee effect */
 .marquee {
-  animation: scroll 15s linear infinite;
+  overflow: hidden;
+  position: relative;
+  background: #f8f9fa;
+  height: 120px;
 }
 
-@keyframes scroll {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+.marquee-content {
+  display: flex;
+  gap: 40px;
+  width: max-content;
+  animation: marquee-right 20s linear infinite;
 }
-.logo-img {
-  width: 150px;
-  height: 100px;
+
+.marquee img {
+  height: 80px;         
+  width: 160px;         
   object-fit: contain;  
+  background: white;    
+  padding: 5px;        
+  border-radius: 8px;  
+  box-shadow: 0 2px 6px rgba(31, 30, 30, 0.1); 
 }
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+
 

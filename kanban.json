@@ -14,80 +14,51 @@
       ]
     },
     {
-      "id": "e0b8",
-      "projectName": "asad",
-      "projectType": "task-management",
-      "columns": [
-        "todo"
-      ],
-      "newCustomColumn": null,
-      "customColumns": [
-        "Nope"
-      ]
-    },
-    {
-      "id": "3430",
-      "projectName": "asad",
-      "projectType": "scrum",
-      "columns": [
-        "todo",
-        "inProgress"
-      ],
-      "newCustomColumn": "Nope",
-      "customColumns": []
-    },
-    {
-      "id": "2531",
-      "projectName": "asad",
+      "id": "34aa",
+      "projectName": "1st Project",
       "projectType": "software-development",
       "columns": [
+        "todo",
+        "inProgress",
         "inReview",
         "done"
       ],
-      "newCustomColumn": "",
-      "customColumns": []
+      "newCustomColumn": null,
+      "customColumns": [
+        "Upcomming"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Initial Task",
+      "description": "Setup project",
+      "startDate": "2025-09-09",
+      "endDate": "2025-09-12",
+      "column": "Testing",
+      "projectId": "1",
+      "notes": []
     },
     {
-      "id": "e83b",
-      "projectName": "asad",
-      "projectType": "software-development",
-      "columns": [
-        "inProgress",
-        "done"
-      ],
-      "newCustomColumn": "",
-      "customColumns": []
+      "id": "4424",
+      "title": "First try",
+      "description": "Trying these feature for the first time",
+      "startDate": "2025-09-04",
+      "endDate": "2025-09-25",
+      "column": "inProgress",
+      "projectId": "1",
+      "notes": []
     },
     {
-      "id": "7054",
-      "projectName": "asad",
-      "projectType": "scrum",
-      "columns": [
-        "todo",
-        "inProgress"
-      ],
-      "newCustomColumn": "ad",
-      "customColumns": []
-    },
-    {
-      "id": "1fab",
-      "projectName": "asad",
-      "projectType": "scrum",
-      "columns": [
-        "inProgress"
-      ],
-      "newCustomColumn": "",
-      "customColumns": []
-    },
-    {
-      "id": "6998",
-      "projectName": "asad",
-      "projectType": "scrum",
-      "columns": [
-        "todo"
-      ],
-      "newCustomColumn": "",
-      "customColumns": []
+      "id": "fadd",
+      "title": "add ",
+      "description": "added first task",
+      "startDate": "2025-09-19",
+      "endDate": null,
+      "column": "done",
+      "projectId": "34aa",
+      "notes": []
     }
   ]
 }

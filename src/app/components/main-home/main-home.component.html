@@ -27,7 +27,7 @@
     </div>
 
     <!-- Scrolling logos -->
-    <div class="overflow-hidden">
+    <!-- <div class="overflow-hidden">
         <div class="d-flex flex-nowrap marquee">
             <img src="assets/airbnb.png" class="logo-img mx-4" alt="Logo 1">
             <img src="assets/cursor.png" class="logo-img mx-4" alt="Logo 2">
@@ -35,29 +35,43 @@
             <img src="assets/openai-logo.png" class="logo-img mx-4" alt="Logo 4">
             <img src="assets/strip.jpg" class="logo-img mx-4" alt="Logo 5">
         </div>
+    </div> -->
+    <div class="marquee">
+        <div class="marquee-content">
+            <img src="assets/airbnb.png" alt="Logo 1">
+            <img src="assets/cursor.png" alt="Logo 2">
+            <img src="assets/DoorDash.jpg" alt="Logo 3">
+            <img src="assets/openai-logo.png" alt="Logo 4">
+            <img src="assets/strip.jpg" alt="Logo 5">
+
+            <!-- Duplicate for seamless loop -->
+            <img src="assets/airbnb.png" alt="Logo 1">
+            <img src="assets/cursor.png" alt="Logo 2">
+            <img src="assets/DoorDash.jpg" alt="Logo 3">
+            <img src="assets/openai-logo.png" alt="Logo 4">
+            <img src="assets/strip.jpg" alt="Logo 5">
+        </div>
     </div>
+
 </section>
 
 <!-- feature section -->
 <section class="container py-5 text-center">
-  <!-- Title -->
-  <h2 class="display-5 fw-bold mb-4">One Space for Every Team</h2>
+    <!-- Title -->
+    <h2 class="display-5 fw-bold mb-4">One Space for Every Team</h2>
 
-  <!-- Buttons -->
-  <div class="d-flex flex-wrap justify-content-center mb-4">
-    <button 
-      class="btn btn-outline bg-light m-2" 
-      *ngFor="let btn of buttons; let i = index"
-      [class.active]="selectedIndex === i"
-      (click)="changeImage(i)">
-      {{ btn.label }}
-    </button>
-  </div>
+    <!-- Buttons -->
+    <div class="d-flex flex-wrap justify-content-center mb-4">
+        <button class="btn btn-outline bg-light m-2" *ngFor="let btn of buttons; let i = index"
+            [class.active]="selectedIndex === i" (click)="changeImage(i)">
+            {{ btn.label }}
+        </button>
+    </div>
 
-  <!-- Image Section -->
-  <div>
-    <img [src]="buttons[selectedIndex].image" alt="Feature Image" class="img-fluid rounded shadow-lg">
-  </div>
+    <!-- Image Section -->
+    <div>
+        <img [src]="buttons[selectedIndex].image" alt="Feature Image" class="img-fluid rounded shadow-lg">
+    </div>
 </section>
 
 <app-footer></app-footer>

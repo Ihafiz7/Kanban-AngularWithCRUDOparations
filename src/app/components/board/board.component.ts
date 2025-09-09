@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
+import { Task } from 'src/app/task.model';
 
 @Component({
   selector: 'app-board',
@@ -8,94 +10,199 @@ import { ProjectService } from 'src/app/services/project.service';
   styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
-  projects:any[] = [];
-  
+  projects: any;
+  projectNames: any;
+  allColumns: string[] = [];
+  tasks: { [key: string]: Task[] } = {};
 
-  constructor( private http: ProjectService, private route : ActivatedRoute){}
+  // AddModal
+  showTaskModal = false;
+  selectedColumn: string | null = null;
+  taskForm!: FormGroup;
+
+  //statusModal
+  statusModalOpen = false;
+  statusTask: any;
+  statusCurrentColumn: string = '';
+  selectedNewColumn: string = '';
+  availableColumns: string[] = [];
+
+  constructor(
+    private route: ActivatedRoute,
+    private http: ProjectService,
+    private fb: FormBuilder
+  ) { }
 
   ngOnInit(): void {
-    this.loadProjects();
-  }
-  loadProjects() {
-    const projectId:string = this.route.snapshot.paramMap.get('id')!;
-    this.http.getProjectById(projectId).subscribe({
-      next: (data) => {
-        this.projects = data;  
-        console.log('current project: ', data);
-      },
-      error: (err) => console.log('Error Loading Projects: ',err),
-      
+    this.taskForm = this.fb.group({
+      title: ['', Validators.required],
+      description: [''],
+      startDate: [''],
+      endDate: ['']
+    });
+
+    this.route.paramMap.subscribe(params => {
+      const projectId = params.get('id');
+      if (projectId) {
+        this.loadProject(projectId);
+      }
     });
   }
 
-  
+
+  loadProject(projectId: string) {
+    this.http.getProjectById(projectId).subscribe({
+      next: (data) => {
+        this.projects = data;
+        // merge columns 
+        this.allColumns = [...(data.columns || []), ...(data.customColumns || [])];
+
+        // empty task arrays
+        this.allColumns.forEach(col => {
+          this.tasks[col] = [];
+        });
+        this.loadTasks();
+      },
+      error: (err) => console.error('Error loading project:', err)
+    });
+
+    this.http.getProjects().subscribe({
+      next: (data) => {
+        this.projectNames = data;
+        console.log('Loaded project names:', this.projectNames);
+      },
+      error: (err) => console.error('Error loading projects:', err)
+    });
+  }
 
 
+  openAddTaskModal(col: string) {
+    this.selectedColumn = col;
+    this.showTaskModal = true;
+    this.taskForm.reset();
+  }
 
+  closeTaskModal() {
+    this.showTaskModal = false;
+    this.selectedColumn = null;
+  }
 
+  submitTask() {
+    if (this.taskForm.valid && this.selectedColumn && this.projects) {
+      const newTask: Task = {
+        ...this.taskForm.value,
+        column: this.selectedColumn,
+        projectId: this.projects.id,
+        notes: []
+      };
+      this.tasks[this.selectedColumn].push(newTask);
 
+      this.http.addTask(newTask).subscribe({
+        next: (res) => console.log('Task saved to backend:', res),
+        error: (err) => console.error('Error saving task:', err)
+      });
 
+      this.closeTaskModal();
+    }
+  }
 
+  removeTask(col: string, taskIndex: number) {
+    const task = this.tasks[col][taskIndex];
 
-  projectName = 'Alpha';
+    if (!task?.id) {
+      console.error("Task has no ID, cannot delete from DB");
+      return;
+    }
+
+    // First remove from backend
+    this.http.deleteTask(task.id).subscribe({
+      next: () => {
+        console.log(`Task ${task.id} deleted from DB`);
+        // Then update UI
+        this.tasks[col].splice(taskIndex, 1);
+      },
+      error: (err) => {
+        console.error("Error deleting task from DB:", err);
+      }
+    });
+  }
+
   tabs = ['Kanban', 'Summary', 'Forms', 'Users'];
   selectedTabIndex = 0;
-
-  columnKeys = ['todo', 'inProgress', 'inReview', 'done'];
-  columnNames: any = {
-    todo: 'To Do',
-    inProgress: 'In Progress',
-    inReview: 'In Review',
-    done: 'Done'
-  };
-
-  tasks: any = {
-    todo: [
-      { title: 'Setup Project', description: 'Initialize Angular + Spring Boot', notes: [] },
-      { title: 'Database Schema', description: 'Design core tables', notes: [] }
-    ],
-    inProgress: [
-      { title: 'Auth Module', description: 'Implement JWT login', notes: [] }
-    ],
-    inReview: [
-      { title: 'UI Review', description: 'Review landing page design', notes: [] }
-    ],
-    done: [
-      { title: 'Landing Page', description: 'Basic home page layout complete', notes: [] }
-    ]
-  };
 
   selectTab(index: number) {
     this.selectedTabIndex = index;
   }
 
-  addTask(column: string) {
-    const title = prompt('Enter task title:');
-    if (title) {
-      const description = prompt('Enter task description:') || '';
-      this.tasks[column].push({ title, description, notes: [] });
+  addNote(col: string, taskIndex: number) {
+    const task = this.tasks[col][taskIndex];
+
+    if (!task.notes) {
+      task.notes = [];
     }
+    task.notes.push('Added A Note');
   }
 
-  removeTask(column: string, index: number) {
-    if (confirm('Are you sure you want to delete this task?')) {
-      this.tasks[column].splice(index, 1);
-    }
+  openStatusModal(task: any, currentCol: string) {
+    this.statusTask = task;
+    this.statusCurrentColumn = currentCol;
+    this.availableColumns = this.allColumns.filter(col => col !== currentCol);
+    this.selectedNewColumn = this.availableColumns[0] || '';
+    this.statusModalOpen = true;
   }
 
-  changeStatus(column: string, index: number) {
-    const statuses = this.columnKeys.filter(c => c !== column);
-    const newStatus = prompt(`Move task to which status? Options: ${statuses.join(', ')}`);
-    if (newStatus && this.tasks[newStatus]) {
-      this.tasks[newStatus].push(this.tasks[column][index]);
-      this.tasks[column].splice(index, 1);
-    }
+  closeStatusModal() {
+    this.statusModalOpen = false;
+    this.statusTask = null;
+    this.statusCurrentColumn = '';
+    this.selectedNewColumn = '';
   }
 
-  addNote(column: string, index: number) {
-    const note = prompt('Enter note for this task:');
-    if (note) {
-      this.tasks[column][index].notes.push(note);
+  changeStatusTo(newColumn: string) {
+    if (!this.statusTask || !newColumn) return;
+
+    // Remove task from current column
+    const currentCol = this.statusCurrentColumn;
+    const taskIndex = this.tasks[currentCol].indexOf(this.statusTask);
+    if (taskIndex > -1) {
+      this.tasks[currentCol].splice(taskIndex, 1);
     }
+
+    // Add task to new column
+    if (!this.tasks[newColumn]) this.tasks[newColumn] = [];
+    this.tasks[newColumn].push({ ...this.statusTask, column: newColumn });
+
+    // PATCH to backend
+    this.http.updateTaskColumn(this.statusTask.id, newColumn).subscribe({
+      next: res => console.log('Task column updated in backend:', res),
+      error: err => console.error('Error updating task column:', err)
+    });
+
+    this.closeStatusModal();
+  }
+
+  loadTasks() {
+    if (!this.projects?.id) return;
+
+    this.http.getTasksByProject(this.projects.id).subscribe({
+      next: (data: Task[]) => {
+        // Clear all columns
+        this.allColumns.forEach(col => this.tasks[col] = []);
+
+        // Populate tasks into correct columns
+        data.forEach(task => {
+          if (!this.tasks[task.column]) this.tasks[task.column] = [];
+          this.tasks[task.column].push(task);
+        });
+
+        console.log('Tasks loaded:', this.tasks);
+      },
+      error: (err) => console.error('Error loading tasks:', err)
+    });
   }
 }
+
+
+
+
+
